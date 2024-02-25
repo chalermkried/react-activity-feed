@@ -1,10 +1,10 @@
 {
-  "name": "react-activity-feed",
-  "version": "1.4.0",
+  "name": "@chalermkried/react-activity-feed",
+  "version": "1.0.0",
   "description": "React components to create activity and notification feeds",
-  "author": "GetStream",
+  "author": "chalermkried",
   "license": "BSD-3-Clause",
-  "repository": "GetStream/react-activity-feed",
+  "repository": "chalermkried/react-activity-feed",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -28,20 +28,18 @@
     "prettier": "prettier --list-different '**/*.{js,ts,tsx,md,mdx,json}' .eslintrc.json .prettierrc .babelrc",
     "prettier-fix": "prettier --write '**/*.{js,ts,tsx,md,mdx,json}' .eslintrc.json .prettierrc .babelrc",
     "validate-translations": "node scripts/validate-translations.js",
-    "lint": "yarn run prettier && yarn run eslint && stylelint '**/*.{css,scss}'",
-    "lint-fix": "yarn run prettier-fix && yarn run eslint --fix && stylelint --fix '**/*.{css,scss}'",
+    "lint": "npm run prettier && npm run eslint && stylelint '**/*.{css,scss}'",
+    "lint-fix": "npm run prettier-fix && npm run eslint --fix && stylelint --fix '**/*.{css,scss}'",
     "stylelint": "stylelint '**/*.{css,scss}'",
     "types": "tsc",
-    "build": "yarn run types && rollup -c",
-    "start": "yarn run types && rollup -c -w",
-    "docs": "docz dev",
-    "docs-build": "docz build",
+    "build": "rollup -c",
+    "start": "rollup -c -w",
     "noop": "echo ''",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "prepare": "yarn run build && husky install",
-    "preversion": "yarn install && yarn lint && yarn test",
-    "version": "yarn docs-build && git add -A docs",
+    "prepare": "npm run build",
+    "preversion": "npm install && npm lint && npm test",
+    "version": "npm docs-build && git add -A docs",
     "postversion": "git push && git push --tags && npm publish"
   },
   "peerDependencies": {
@@ -94,7 +92,6 @@
     "eslint-plugin-sonarjs": "^0.7.0",
     "eslint-plugin-typescript-sort-keys": "^1.6.0",
     "faker": "^5.5.3",
-    "husky": "^6.0.0",
     "jest": "^26.6.3",
     "karma": "^6.3.2",
     "karma-chrome-launcher": "^3.1.0",
@@ -165,5 +162,8 @@
       "limit": "10 KB",
       "webpack": false
     }
-  ]
+  ],
+  "volta": {
+    "node": "18.17.0"
+  }
 }
