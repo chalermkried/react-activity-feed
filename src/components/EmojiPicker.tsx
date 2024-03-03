@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Data as EmojiDataSet, EmojiData, I18n } from 'emoji-mart';
 // @ts-expect-error
@@ -20,6 +20,7 @@ export type EmojiPickerProps = PropsWithElementAttributes<{
   emojiData?: EmojiDataSet;
   i18n?: PartialI18n;
   onSelect?: (emoji: EmojiData) => void;
+  children?: ReactNode
 }>;
 
 export const getEmojiPickerFieldsTranslations = (t: TFunction): I18n => ({
@@ -45,7 +46,7 @@ export const getEmojiPickerFieldsTranslations = (t: TFunction): I18n => ({
   },
 });
 
-export const EmojiPicker = ({ emojiData = defaultEmojiData, i18n, onSelect, className, style }: EmojiPickerProps) => {
+export const EmojiPicker = ({ emojiData = defaultEmojiData, i18n, onSelect, className, style, children = <EmojiIcon /> }: EmojiPickerProps) => {
   const { t } = useTranslationContext();
   const [open, setOpen] = useState(false);
   const emojiPicker = useRef<HTMLDivElement>(null);
@@ -66,7 +67,7 @@ export const EmojiPicker = ({ emojiData = defaultEmojiData, i18n, onSelect, clas
         </div>
       )}
       <div role="button" onClick={() => setOpen(true)} className="raf-emoji-picker__button">
-        <EmojiIcon />
+      {children}
       </div>
     </div>
   );

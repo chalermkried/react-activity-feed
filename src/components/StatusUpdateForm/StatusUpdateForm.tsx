@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Activity, NewActivity, UR } from 'getstream';
 import {
+  AttachmentIcon,
   FilePreviewer,
   FileUpload,
   FileUploadButton,
@@ -9,12 +10,13 @@ import {
   ImageUpload,
   ImageUploadButton,
   LoadingIndicator,
+  PictureIcon,
 } from 'react-file-utils';
 
 import { DefaultAT, DefaultUT, useTranslationContext } from '../../context';
 import { ElementOrComponentOrLiteralType, PropsWithElementAttributes, smartRender } from '../../utils';
 import { useStatusUpdateForm } from './useStatusUpdateForm';
-import { Panel, PanelContent, PanelFooter, PanelHeading } from '../Panel';
+import { PanelContent, PanelFooter, PanelHeading } from '../Panel';
 import { Textarea as DefaultTextarea, TextareaProps } from '../Textarea';
 import { Avatar } from '../Avatar';
 import { Card } from '../Card';
@@ -41,7 +43,11 @@ export type StatusUpdateFormProps<AT extends DefaultAT = DefaultAT> = PropsWithE
   /** Add extra footer item */
   FooterItem?: ReactNode;
   /** The header to display */
-  Header?: ReactNode;
+  Header?: ReactNode | null;
+  ImageUploadButtonChildren?: ReactNode
+  FileUploadButtonChildren?: ReactNode
+  EmojiPickerChildren?: ReactNode
+  renderSubmitButton?: (props: { submitting: boolean; canSubmit: () => boolean }) => ReactNode
   /** If you want to change something about the activity data that this form
    * sends to stream you can do that with this function. This function gets the
    * activity data that the form would send normally and should return the
@@ -60,6 +66,7 @@ export type StatusUpdateFormProps<AT extends DefaultAT = DefaultAT> = PropsWithE
   onSuccess?: (activity: Activity<AT>) => void;
   /** Custom Textarea component implementation */
   Textarea?: ElementOrComponentOrLiteralType<Omit<TextareaProps, 'maxLength' | 'rows'>>;
+  TextareaClassname?: string
   /** An extra trigger for ReactTextareaAutocomplete, this can be used to show
    * a menu when typing @xxx or #xxx, in addition to the emoji menu when typing
    * :xxx  */
@@ -84,6 +91,11 @@ export function StatusUpdateForm<
   Header,
   FooterItem,
   Textarea = DefaultTextarea,
+  TextareaClassname,
+  ImageUploadButtonChildren = <PictureIcon />,
+  FileUploadButtonChildren = 	<AttachmentIcon />,
+  EmojiPickerChildren,
+  renderSubmitButton,
   trigger,
   doRequest,
   userId,
@@ -102,10 +114,12 @@ export function StatusUpdateForm<
   });
 
   return (
-    <Panel style={style} className={className}>
-      <form onSubmit={state.onSubmitForm}>
+      <form style={style} className={className} onSubmit={state.onSubmitForm}>
         <ImageDropzone handleFiles={state.uploadNewFiles}>
+          {Header === null ? <>
+          </> :
           <PanelHeading>{Header ?? <Title>{t('New Post')}</Title>}</PanelHeading>
+          }
 
           <PanelContent>
             <div style={{ display: 'flex' }}>
@@ -117,6 +131,7 @@ export function StatusUpdateForm<
 
               {smartRender(Textarea, {
                 emojiData,
+                className: TextareaClassname,
                 innerRef: state.textInputRef,
                 onChange: state.onChange,
                 onPaste: state.onPaste,
@@ -189,23 +204,33 @@ export function StatusUpdateForm<
           <PanelFooter>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ flex: 1 }}>
-                <div style={{ marginRight: '32px', display: 'inline-block' }}>
-                  <ImageUploadButton resetOnChange handleFiles={state.uploadNewFiles} multiple />
+                <div style={{ marginRight: '24px', display: 'inline-block' }}>
+                  <ImageUploadButton resetOnChange handleFiles={state.uploadNewFiles} multiple>
+                    {ImageUploadButtonChildren}
+                  </ImageUploadButton>
                 </div>
-                <div style={{ marginRight: '32px', display: 'inline-block' }}>
-                  <FileUploadButton handleFiles={state.uploadNewFiles} multiple />
+                <div style={{ marginRight: '24px', display: 'inline-block' }}>
+                  <FileUploadButton handleFiles={state.uploadNewFiles} multiple>
+                  {FileUploadButtonChildren}
+                    </FileUploadButton>
                 </div>
-                <EmojiPicker onSelect={state.onSelectEmoji} emojiData={emojiData} i18n={emojiI18n} />
+                <EmojiPicker onSelect={state.onSelectEmoji} emojiData={emojiData} i18n={emojiI18n}>
+                {EmojiPickerChildren}
+                  </EmojiPicker>
                 {FooterItem}
               </div>
 
-              <Button type="submit" buttonStyle="primary" loading={state.submitting} disabled={!state.canSubmit()}>
-                {t('Post')}
-              </Button>
+              {renderSubmitButton
+                ? renderSubmitButton(state)
+                : (
+                  <Button type="submit" buttonStyle="primary" loading={state.submitting} disabled={!state.canSubmit()}>
+                    {t('Post')}
+                  </Button>
+                )
+              }
             </div>
           </PanelFooter>
         </ImageDropzone>
       </form>
-    </Panel>
   );
 }
