@@ -44,27 +44,19 @@ export const ActivityContent = <
   return (
     <div className={classNames('raf-activity__content', className)} style={style}>
       {text && (
-        <div style={{ padding: '8px 16px' }}>
           <p>{textRenderer(text, 'raf-activity', props.onClickMention, props.onClickHashtag)}</p>
-        </div>
       )}
 
       {og && (
-        <div style={{ padding: '8px 16px' }}>
-          {og.videos ? <Video og={og} /> : og.audios ? <Audio og={og} /> : smartRender(Card, og)}
-        </div>
+          og.videos ? <Video og={og} /> : og.audios ? <Audio og={og} /> : smartRender(Card, og)
       )}
 
       {typeof image === 'string' && (
-        <div style={{ padding: '8px 0' }}>
           <Gallery images={[image]} />
-        </div>
       )}
 
       {!!images.length && (
-        <div style={{ padding: '8px 0' }}>
           <Gallery images={images} />
-        </div>
       )}
 
       {!!files.length && (

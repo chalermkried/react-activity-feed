@@ -1,4 +1,4 @@
-import React, { useRef, useState, FormEvent, useEffect } from 'react';
+import React, { useRef, useState, FormEvent, useEffect, ReactNode } from 'react';
 import classNames from 'classnames';
 import { EnrichedActivity, Activity } from 'getstream';
 import { Data as EmojiDataSet } from 'emoji-mart';
@@ -22,10 +22,13 @@ export type CommentFieldProps<
      */
     emojiData?: EmojiDataSet;
     image?: string;
+    onChange?: (e: React.SyntheticEvent<HTMLTextAreaElement, Event>) => void;
     onSuccess?: () => void;
     placeholder?: string;
     targetFeeds?: string[];
     trigger?: TextareaProps['trigger'];
+    TextareaClassname?: string
+    renderSubmitButton?: (props: { disabled: boolean }) => ReactNode
   },
   HTMLFormElement
 >;
@@ -39,7 +42,10 @@ export const CommentField = <UT extends DefaultUT = DefaultUT, AT extends Defaul
   trigger,
   targetFeeds,
   className,
+  onChange,
+  TextareaClassname,
   style,
+  renderSubmitButton,
 }: CommentFieldProps<UT, AT>) => {
   const feed = useFeedContext<UT, AT>();
   const { t } = useTranslationContext();
@@ -81,18 +87,27 @@ export const CommentField = <UT extends DefaultUT = DefaultUT, AT extends Defaul
       {image && <Avatar image={image} circle size={39} />}
       <div className="raf-comment-field__group">
         <Textarea
+          className={TextareaClassname}
           rows={1}
           value={text}
           placeholder={placeholder ?? t('Start Typing...')}
-          onChange={(event) => setText((pv) => inputValueFromEvent<HTMLTextAreaElement>(event, true) ?? pv)}
+          onChange={(event) => {
+            onChange?.(event)
+            setText((pv) => inputValueFromEvent<HTMLTextAreaElement>(event, true) ?? pv)
+          }}
           emojiData={emojiData}
           trigger={trigger}
           maxLength={280}
           innerRef={(element) => (textareaReference.current = element)}
         />
-        <Button buttonStyle="primary" disabled={!text} type="submit">
-          {t('Post')}
-        </Button>
+        {renderSubmitButton
+          ? renderSubmitButton({ disabled: !text })
+          : (
+            <Button buttonStyle="primary" disabled={!text} type="submit">
+              {t('Post')}
+            </Button>
+          )
+        }
       </div>
     </form>
   );
