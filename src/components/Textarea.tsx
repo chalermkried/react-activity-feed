@@ -30,7 +30,7 @@ export type TextareaProps = PropsWithElementAttributes<{
   value?: string;
 }>;
 
-const emojiTrigger: (emojiData: EmojiDataSet) => TriggerType<BaseEmoji> = (emojiData) => {
+export const textareaEmojiTrigger: (emojiData: EmojiDataSet) => TriggerType<BaseEmoji> = (emojiData) => {
   const emojiIndex = new EmojiIndex(emojiData);
 
   return {
@@ -67,7 +67,7 @@ export const Textarea = ({
   className,
   style,
 }: TextareaProps) => {
-  const emoji = useMemo(() => emojiTrigger(emojiData), []);
+  const emoji = useMemo(() => textareaEmojiTrigger(emojiData), []);
 
   return (
     <ReactTextareaAutocomplete
